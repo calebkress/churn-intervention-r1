@@ -1,0 +1,15 @@
+artifact_uri: /Users/calebkress/dev/work-stuff/churn-intervention-r1/mlflow/649485132074040236/fe9b0889251e4a79b0438822aab4184f/artifacts
+end_time: 1780955501385
+entry_point_name: ''
+experiment_id: '649485132074040236'
+lifecycle_stage: active
+run_id: fe9b0889251e4a79b0438822aab4184f
+run_name: ppo_3464c73a
+run_uuid: fe9b0889251e4a79b0438822aab4184f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1780955481417
+status: 3
+tags: []
+user_id: calebkress
