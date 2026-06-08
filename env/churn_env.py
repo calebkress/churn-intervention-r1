@@ -50,7 +50,7 @@ class ChurnEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=0.0,
             high=1.0,
-            shape=(13,),
+            shape=(14,),
             dtype=np.float32,
         )
         self.action_space = spaces.Discrete(5)
@@ -60,6 +60,7 @@ class ChurnEnv(gym.Env):
         self.current_step: int = 0
         self.interventions_this_episode: int = 0
         self.last_action: int = 0
+        self.action_history: list[int] = []
         self.episode_reward: float = 0.0
         self.episode_log: list[dict] = []
 
@@ -83,6 +84,7 @@ class ChurnEnv(gym.Env):
         self.current_step = 0
         self.interventions_this_episode = 0
         self.last_action = 0
+        self.action_history = []
         self.episode_reward = 0.0
         self.episode_log = []
 
@@ -109,17 +111,19 @@ class ChurnEnv(gym.Env):
         # Resolve churn stochastically
         churn_occurred = resolve_churn(self.customer, action)
 
-        # Compute reward
+        # Compute reward with action history
         reward, breakdown = compute_reward(
             action=action,
             churn_occurred=churn_occurred,
             churn_probability=self.customer.churn_probability,
             interventions_this_episode=self.interventions_this_episode,
+            last_actions=self.action_history,
         )
 
         # Update episode state
         if action != 0:
             self.interventions_this_episode += 1
+        self.action_history.append(action)
         self.last_action = action
         self.current_step += 1
         self.episode_reward += reward
@@ -151,7 +155,6 @@ class ChurnEnv(gym.Env):
         return obs, reward, terminated, truncated, info
 
     def render(self):
-        """Rendering is handled by the React dashboard. No-op here."""
         pass
 
     def close(self):
@@ -162,11 +165,6 @@ class ChurnEnv(gym.Env):
     # ------------------------------------------------------------------
 
     def _sample_customer(self) -> Customer:
-        """
-        Sample a customer for this episode.
-        If a pool was provided, sample randomly from it.
-        Otherwise generate a fresh synthetic customer.
-        """
         if self.customers:
             raw = self.customers[np.random.randint(len(self.customers))]
             return Customer(
@@ -188,7 +186,6 @@ class ChurnEnv(gym.Env):
         return generate_customer()
 
     def _get_obs(self) -> np.ndarray:
-        """Build the current observation vector from customer state."""
         return self.customer.to_observation(
             interventions_this_episode=self.interventions_this_episode,
             last_action=self.last_action,
@@ -197,7 +194,6 @@ class ChurnEnv(gym.Env):
         )
 
     def _print_step(self, info: dict) -> None:
-        """Verbose step logging for debugging."""
         print(
             f"  Step {info['step']:>2} | "
             f"{info['action_name']:<24} | "
@@ -208,11 +204,6 @@ class ChurnEnv(gym.Env):
         )
 
     def get_episode_summary(self) -> dict:
-        """
-        Returns a summary of the completed episode.
-        Call after terminated or truncated is True.
-        Useful for logging to Atlas and MLflow.
-        """
         if not self.episode_log:
             return {}
 
@@ -240,11 +231,8 @@ class ChurnEnv(gym.Env):
 # ------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import sys
-
     print("=== ChurnEnv smoke test ===\n")
 
-    # Test 1: environment with generated customers
     print("Test 1: Random episode (verbose, generated customer)")
     print("-" * 60)
     env = ChurnEnv(verbose=True)
@@ -267,7 +255,6 @@ if __name__ == "__main__":
     print(f"  interventions: {summary['interventions']}")
     print(f"  actions:       {summary['action_distribution']}")
 
-    # Test 2: observation space compliance
     print("\nTest 2: Observation space compliance")
     print("-" * 60)
     env2 = ChurnEnv()
@@ -276,7 +263,6 @@ if __name__ == "__main__":
     print(f"  obs in bounds: True")
     print(f"  obs range: [{obs.min():.3f}, {obs.max():.3f}]")
 
-    # Test 3: run 100 episodes, report churn rate
     print("\nTest 3: 100 episodes, random policy churn rate")
     print("-" * 60)
     env3 = ChurnEnv()

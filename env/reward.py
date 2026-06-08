@@ -5,8 +5,9 @@ Tune reward weights here only. Do not hardcode reward logic in churn_env.py.
 
 Design philosophy:
   The agent should learn to retain customers profitably without burning
-  relationships through over-intervention. A good policy:
+  relationships through over-intervention or repetitive contact. A good policy:
     - Intervenes appropriately on high-risk customers
+    - Varies its approach rather than repeating the same action
     - Leaves low-risk customers alone (do_nothing is a positive signal)
     - Doesn't spam expensive interventions indiscriminately
     - Backs off when a customer has been contacted too many times
@@ -14,19 +15,16 @@ Design philosophy:
 
 # --- Action costs ---
 # Indexed by action: [do_nothing, email, call, discount, escalate]
-# Reflects real-world cost hierarchy: escalation is expensive,
-# email is cheap, doing nothing costs nothing.
 ACTION_COSTS = [0.0, 0.5, 2.0, 5.0, 8.0]
 
 # --- Reward weights ---
-# Tune these if the agent develops degenerate behavior during training.
-# See tuning guide at bottom of file.
-RETENTION_BONUS = 15.0       # reward for successfully retaining a customer
-CHURN_PENALTY = -20.0        # penalty when a customer churns
-OVER_CONTACT_THRESHOLD = 3   # max interventions before penalty kicks in
-OVER_CONTACT_PENALTY = -3.0  # penalty per step above threshold
-EFFICIENCY_BONUS = 1.5       # reward for do_nothing on a low-risk customer
-LOW_RISK_THRESHOLD = 0.20    # churn probability below which do_nothing is rewarded
+RETENTION_BONUS = 15.0        # reward for successfully retaining a customer
+CHURN_PENALTY = -20.0         # penalty when a customer churns
+OVER_CONTACT_THRESHOLD = 3    # max interventions before penalty kicks in
+OVER_CONTACT_PENALTY = -3.0   # penalty per step above threshold
+EFFICIENCY_BONUS = 1.5        # reward for do_nothing on a low-risk customer
+LOW_RISK_THRESHOLD = 0.20     # churn probability below which do_nothing is rewarded
+REPETITION_PENALTY = -2.0     # penalty for taking same non-zero action 3+ times in a row
 
 
 def compute_reward(
@@ -34,6 +32,7 @@ def compute_reward(
     churn_occurred: bool,
     churn_probability: float,
     interventions_this_episode: int,
+    last_actions: list = [],
 ) -> tuple[float, dict]:
     """
     Compute the reward for a single environment step.
@@ -43,7 +42,7 @@ def compute_reward(
         churn_occurred: whether the customer churned this step
         churn_probability: customer's current churn probability
         interventions_this_episode: total interventions taken so far this episode
-            (not counting the current step)
+        last_actions: list of recent actions taken this episode
 
     Returns:
         total_reward: float
@@ -53,7 +52,7 @@ def compute_reward(
     churn_penalty = CHURN_PENALTY if churn_occurred else 0.0
     intervention_cost = -ACTION_COSTS[action]
 
-    # Penalize over-contacting — mounts each step above the threshold
+    # Penalize over-contacting
     over_contact_penalty = (
         OVER_CONTACT_PENALTY
         if action != 0 and interventions_this_episode >= OVER_CONTACT_THRESHOLD
@@ -61,10 +60,19 @@ def compute_reward(
     )
 
     # Reward doing nothing on genuinely low-risk customers
-    # Teaches the agent that restraint is a positive decision, not just neutral
     efficiency_bonus = (
         EFFICIENCY_BONUS
         if action == 0 and churn_probability < LOW_RISK_THRESHOLD
+        else 0.0
+    )
+
+    # Penalize repeating the same non-zero action 3+ times in a row
+    repetition_penalty = (
+        REPETITION_PENALTY
+        if action != 0
+        and len(last_actions) >= 2
+        and last_actions[-1] == action
+        and last_actions[-2] == action
         else 0.0
     )
 
@@ -74,6 +82,7 @@ def compute_reward(
         + intervention_cost
         + over_contact_penalty
         + efficiency_bonus
+        + repetition_penalty
     )
 
     breakdown = {
@@ -82,6 +91,7 @@ def compute_reward(
         "intervention_cost": intervention_cost,
         "over_contact_penalty": over_contact_penalty,
         "efficiency_bonus": efficiency_bonus,
+        "repetition_penalty": repetition_penalty,
         "total": total_reward,
     }
 
@@ -106,6 +116,10 @@ def action_name(action: int) -> str:
 #   CHURN_PENALTY is too weak relative to ACTION_COSTS.
 #   Try increasing CHURN_PENALTY or decreasing ACTION_COSTS across the board.
 #
+# If agent spams one intervention on every customer:
+#   REPETITION_PENALTY is too weak. Increase it.
+#   Or ACTION_COSTS are too uniform — widen the gap between cheap and expensive.
+#
 # If agent spams escalate_to_retention on every customer:
 #   ACTION_COSTS[4] is too low or RETENTION_BONUS is too high.
 #   Try increasing ACTION_COSTS[4] or reducing RETENTION_BONUS.
@@ -123,7 +137,6 @@ def action_name(action: int) -> str:
 
 
 if __name__ == "__main__":
-    # Smoke test — verify reward components behave as expected
     print("=== Reward function smoke test ===\n")
 
     scenarios = [
@@ -131,26 +144,37 @@ if __name__ == "__main__":
             "label": "Do nothing, customer retained, low risk",
             "action": 0, "churn_occurred": False,
             "churn_probability": 0.10, "interventions_this_episode": 0,
+            "last_actions": [],
         },
         {
             "label": "Escalate, customer retained, high risk",
             "action": 4, "churn_occurred": False,
             "churn_probability": 0.80, "interventions_this_episode": 1,
+            "last_actions": [2],
         },
         {
             "label": "Escalate, customer churns anyway",
             "action": 4, "churn_occurred": True,
             "churn_probability": 0.80, "interventions_this_episode": 1,
+            "last_actions": [2],
         },
         {
             "label": "Email, customer retained, over-contact",
             "action": 1, "churn_occurred": False,
             "churn_probability": 0.50, "interventions_this_episode": 4,
+            "last_actions": [2, 3],
+        },
+        {
+            "label": "Outbound call, third time in a row (repetition penalty)",
+            "action": 2, "churn_occurred": False,
+            "churn_probability": 0.60, "interventions_this_episode": 2,
+            "last_actions": [2, 2],
         },
         {
             "label": "Do nothing, customer churns, high risk",
             "action": 0, "churn_occurred": True,
             "churn_probability": 0.75, "interventions_this_episode": 0,
+            "last_actions": [],
         },
     ]
 
@@ -160,6 +184,7 @@ if __name__ == "__main__":
             churn_occurred=s["churn_occurred"],
             churn_probability=s["churn_probability"],
             interventions_this_episode=s["interventions_this_episode"],
+            last_actions=s["last_actions"],
         )
         print(f"Scenario: {s['label']}")
         print(f"  Action: {action_name(s['action'])}")

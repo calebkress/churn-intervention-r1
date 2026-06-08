@@ -48,6 +48,8 @@ class Customer:
         Returns a normalized float32 observation vector for the RL agent.
         Shape: (13,)
         """
+        risk_level = 0.0 if self.churn_probability < 0.3 else (0.5 if self.churn_probability < 0.6 else 1.0)
+        
         return np.array([
             self.tenure_months / 120.0,
             PLAN_TYPE_ENCODING[self.plan_type] / 2.0,
@@ -62,6 +64,7 @@ class Customer:
             interventions_this_episode / 10.0,
             last_action / 4.0,
             steps_remaining / episode_length,
+            risk_level,
         ], dtype=np.float32)
 
 
