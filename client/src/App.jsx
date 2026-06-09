@@ -9,6 +9,21 @@ import SimilarCustomerInsight from './components/SimilarCustomerInsight'
 // Canonical run — highlighted in the training runs selector
 const CANONICAL_RUN_ID = 'b4193c90'
 
+const MG = {
+  bg:          '#0D1117',
+  card:        '#161B22',
+  cardAlt:     '#21262D',
+  border:      '#21262D',
+  green:       '#3FB950',
+  blue:        '#2D7DD2',
+  greenCta:    '#3FB950',
+  textPrimary: '#E6EDF3',
+  textMuted:   '#7D8590',
+  textDim:     '#484F58',
+  red:         '#F85149',
+  amber:       '#D29922',
+}
+
 const styles = {
   app: {
     maxWidth: 1400,
@@ -17,71 +32,73 @@ const styles = {
   },
   header: {
     marginBottom: 32,
-    borderBottom: '1px solid #1e2433',
+    borderBottom: `1px solid ${MG.border}`,
     paddingBottom: 20,
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: 12,
   },
   title: {
     fontSize: 22,
     fontWeight: 700,
-    color: '#f1f5f9',
-    marginBottom: 4,
+    color: MG.textPrimary,
   },
   subtitle: {
     fontSize: 13,
-    color: '#64748b',
+    color: MG.textMuted,
+    marginLeft: 'auto',
   },
   badge: {
     display: 'inline-block',
-    background: '#1a2744',
-    color: '#60a5fa',
+    background: MG.green,
+    color: MG.bg,
     fontSize: 11,
-    fontWeight: 600,
+    fontWeight: 700,
     padding: '2px 8px',
     borderRadius: 4,
-    marginLeft: 10,
     letterSpacing: '0.04em',
   },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 20,
-    marginBottom: 20,
+    gap: 16,
+    marginBottom: 16,
   },
   gridFull: {
     display: 'grid',
     gridTemplateColumns: '1fr',
-    gap: 20,
-    marginBottom: 20,
+    gap: 16,
+    marginBottom: 16,
   },
   card: {
-    background: '#161b27',
-    border: '1px solid #1e2433',
+    background: MG.card,
+    border: `1px solid ${MG.border}`,
     borderRadius: 10,
     padding: '20px 24px',
   },
   cardTitle: {
-    fontSize: 13,
-    fontWeight: 600,
-    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: 700,
+    color: MG.green,
     textTransform: 'uppercase',
-    letterSpacing: '0.06em',
+    letterSpacing: '0.08em',
     marginBottom: 16,
   },
   statsRow: {
     display: 'flex',
-    gap: 16,
-    marginBottom: 24,
+    gap: 12,
+    marginBottom: 20,
   },
   stat: {
     flex: 1,
-    background: '#161b27',
-    border: '1px solid #1e2433',
+    background: MG.card,
+    border: `1px solid ${MG.border}`,
     borderRadius: 10,
     padding: '16px 20px',
   },
   statLabel: {
     fontSize: 11,
-    color: '#64748b',
+    color: MG.textMuted,
     textTransform: 'uppercase',
     letterSpacing: '0.06em',
     marginBottom: 6,
@@ -89,42 +106,42 @@ const styles = {
   statValue: {
     fontSize: 28,
     fontWeight: 700,
-    color: '#f1f5f9',
+    color: MG.textPrimary,
   },
   statSub: {
     fontSize: 12,
-    color: '#64748b',
+    color: MG.textDim,
     marginTop: 2,
   },
-  statGreen: { color: '#34d399' },
-  statRed:   { color: '#f87171' },
+  statGreen: { color: MG.green },
+  statRed:   { color: MG.red },
   customerPanel: {
     display: 'flex',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 20,
     alignItems: 'center',
   },
   select: {
     flex: 1,
-    background: '#1e2433',
-    border: '1px solid #2d3748',
+    background: MG.cardAlt,
+    border: `1px solid ${MG.border}`,
     borderRadius: 6,
-    color: '#e2e8f0',
+    color: MG.textPrimary,
     padding: '8px 12px',
     fontSize: 13,
   },
   btn: {
-    background: '#1d4ed8',
-    color: '#fff',
+    background: MG.green,
+    color: MG.bg,
     border: 'none',
     borderRadius: 6,
     padding: '8px 16px',
     fontSize: 13,
-    fontWeight: 500,
+    fontWeight: 700,
   },
   sectionLabel: {
     fontSize: 11,
-    color: '#475569',
+    color: MG.green,
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
     marginBottom: 12,
@@ -206,12 +223,10 @@ export default function App() {
     <div style={styles.app}>
       {/* Header */}
       <div style={styles.header}>
-        <div style={styles.title}>
-          Churn Intervention RL
-          <span style={styles.badge}>MongoDB Atlas</span>
-        </div>
+        <div style={styles.title}>Churn Intervention RL</div>
+        <span style={styles.badge}>MongoDB Atlas</span>
         <div style={styles.subtitle}>
-          PPO agent trained to minimize telecom customer churn · {interventions.length.toLocaleString()} interventions evaluated
+          PPO agent · {interventions.length.toLocaleString()} interventions · 10,000 customers
         </div>
       </div>
 

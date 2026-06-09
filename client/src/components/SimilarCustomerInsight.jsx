@@ -1,14 +1,6 @@
 /**
  * SimilarCustomerInsight.jsx
  * ==========================
- * THE demo component. Pick a customer, click "Get insight", and the system:
- *   1. Fetches the customer's feature_vector from Atlas
- *   2. Runs Atlas Vector Search to find 5 similar historical customers
- *   3. Joins their intervention history
- *   4. Sends context to gpt-4o-mini via LangChain
- *   5. Returns a plain-English recommendation
- *
- * This is the "Atlas Vector Search + LangChain" story in one UI component.
  *
  * Data flow: this component → Express /api/ml/insights/:id → FastAPI /insights/:id
  *            → lc/insights.py → Atlas $vectorSearch + gpt-4o-mini
@@ -40,16 +32,16 @@ const styles = {
   },
   select: {
     flex: 1,
-    background: '#1e2433',
-    border: '1px solid #2d3748',
+    background: '#161B22',
+    border: '1px solid #21262D',
     borderRadius: 6,
-    color: '#e2e8f0',
+    color: '#E6EDF3',
     padding: '8px 12px',
     fontSize: 13,
   },
   btn: {
-    background: '#1d4ed8',
-    color: '#fff',
+    background: '#3FB950',
+    color: '#0D1117',
     border: 'none',
     borderRadius: 6,
     padding: '8px 18px',
@@ -58,8 +50,8 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   btnDisabled: {
-    background: '#1e2433',
-    color: '#475569',
+    background: '#161B22',
+    color: '#484F58',
     border: 'none',
     borderRadius: 6,
     padding: '8px 18px',
@@ -69,8 +61,8 @@ const styles = {
     cursor: 'not-allowed',
   },
   insightBox: {
-    background: '#0f172a',
-    border: '1px solid #1e3a5f',
+    background: '#0D1117',
+    border: '1px solid #21262D',
     borderRadius: 8,
     padding: '16px 18px',
     fontSize: 14,
@@ -79,13 +71,13 @@ const styles = {
     minHeight: 100,
   },
   insightLoading: {
-    color: '#475569',
+    color: '#484F58',
     fontStyle: 'italic',
     fontSize: 13,
   },
   customerCard: {
-    background: '#0f172a',
-    border: '1px solid #1e2433',
+    background: '#0D1117',
+    border: '1px solid #161B22',
     borderRadius: 8,
     padding: '12px 16px',
     marginBottom: 10,
@@ -95,15 +87,15 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: 6,
-    color: '#94a3b8',
+    color: '#7D8590',
     fontWeight: 600,
     fontSize: 11,
     textTransform: 'uppercase',
     letterSpacing: '0.04em',
   },
   similarityBadge: {
-    background: '#1a2744',
-    color: '#60a5fa',
+    background: '#1C2128',
+    color: '#3FB950',
     borderRadius: 4,
     padding: '1px 6px',
     fontSize: 11,
@@ -120,22 +112,22 @@ const styles = {
     borderRadius: 4,
     fontWeight: 500,
   },
-  retained: { background: '#052e16', color: '#34d399' },
-  churned:  { background: '#1c0a0a', color: '#f87171' },
+  retained: { background: '#1C2128', color: '#3FB950' },
+  churned:  { background: '#1A0A09', color: '#F85149' },
   label: {
     fontSize: 11,
-    color: '#64748b',
+    color: '#7D8590',
     marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: '0.06em',
   },
   errorBox: {
-    background: '#1c0a0a',
-    border: '1px solid #3f0d0d',
+    background: '#1A0A09',
+    border: '1px solid #3D0E0D',
     borderRadius: 8,
     padding: '12px 16px',
     fontSize: 13,
-    color: '#f87171',
+    color: '#F85149',
   },
 }
 
@@ -166,7 +158,7 @@ export default function SimilarCustomerInsight({ customers }) {
   }
 
   // Show high-risk customers first in selector
-  const sortedCustomers = [...customers].sort(
+  const sortedCustomers = [...(customers || [])].sort(
     (a, b) => (b.churn_probability || 0) - (a.churn_probability || 0)
   )
 
@@ -225,12 +217,12 @@ export default function SimilarCustomerInsight({ customers }) {
                 {((c.similarity_score || 0) * 100).toFixed(1)}% match
               </span>
             </div>
-            <div style={{ color: '#64748b', fontSize: 11, marginBottom: 4 }}>
+            <div style={{ color: '#7D8590', fontSize: 11, marginBottom: 4 }}>
               Churn risk: {((c.churn_probability || 0) * 100).toFixed(0)}%
             </div>
             <div style={styles.interventionList}>
               {c.intervention_history?.length === 0 && (
-                <span style={{ color: '#475569', fontSize: 11 }}>No interventions on record</span>
+                <span style={{ color: '#484F58', fontSize: 11 }}>No interventions on record</span>
               )}
               {c.intervention_history?.slice(0, 8).map((iv, j) => (
                 <span
@@ -244,7 +236,7 @@ export default function SimilarCustomerInsight({ customers }) {
                 </span>
               ))}
               {(c.intervention_history?.length || 0) > 8 && (
-                <span style={{ color: '#475569', fontSize: 10 }}>
+                <span style={{ color: '#484F58', fontSize: 10 }}>
                   +{c.intervention_history.length - 8} more
                 </span>
               )}
@@ -252,7 +244,7 @@ export default function SimilarCustomerInsight({ customers }) {
           </div>
         ))}
         {!result && !loading && (
-          <div style={{ color: '#334155', fontSize: 13, paddingTop: 8 }}>
+          <div style={{ color: '#1C2128', fontSize: 13, paddingTop: 8 }}>
             Similar customers will appear here after running an insight query.
           </div>
         )}

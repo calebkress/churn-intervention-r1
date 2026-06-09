@@ -9,10 +9,10 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts'
 
 const tooltipStyle = {
-  background: '#1e2433',
-  border: '1px solid #2d3748',
+  background: '#161B22',
+  border: '1px solid #21262D',
   borderRadius: 6,
-  color: '#e2e8f0',
+  color: '#E6EDF3',
   fontSize: 12,
 }
 
@@ -53,29 +53,29 @@ export default function OverIntervention({ interventions }) {
 
   return (
     <div>
-      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
+      <div style={{ fontSize: 12, color: '#7D8590', marginBottom: 12 }}>
         Reward function penalizes {'>'} 3 contacts per episode. Agent learned to avoid over-contacting low-risk customers.
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e2433" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#161B22" vertical={false} />
           <XAxis
             dataKey="name"
-            tick={{ fill: '#64748b', fontSize: 11 }}
+            tick={{ fill: '#7D8590', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
-            label={{ value: 'Interventions per customer', position: 'insideBottom', offset: -2, fill: '#475569', fontSize: 11 }}
+            label={{ value: 'Interventions per customer', position: 'insideBottom', offset: -2, fill: '#484F58', fontSize: 11 }}
           />
           <YAxis
-            tick={{ fill: '#64748b', fontSize: 11 }}
+            tick={{ fill: '#7D8590', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             width={36}
           />
           <Tooltip contentStyle={tooltipStyle} />
-          <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8', paddingTop: 8 }} />
-          <Bar dataKey="retained" stackId="a" fill="#34d399" radius={[0, 0, 0, 0]} name="Retained" />
-          <Bar dataKey="churned"  stackId="a" fill="#f87171" radius={[4, 4, 0, 0]} name="Churned" />
+          <Legend wrapperStyle={{ fontSize: 11, color: '#7D8590', paddingTop: 8 }} />
+          <Bar dataKey="retained" stackId="a" fill="#2D7DD2" radius={[0, 0, 0, 0]} name="Retained" />
+          <Bar dataKey="churned"  stackId="a" fill="#F85149" radius={[4, 4, 0, 0]} name="Churned" />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -84,7 +84,7 @@ export default function OverIntervention({ interventions }) {
 
 function Empty() {
   return (
-    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 13 }}>
+    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#484F58', fontSize: 13 }}>
       No intervention data loaded.
     </div>
   )

@@ -9,9 +9,9 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 
 const PLAN_COLORS = {
-  prepaid:    '#60a5fa',
-  postpaid:   '#34d399',
-  enterprise: '#f59e0b',
+  prepaid:    '#3FB950',
+  postpaid:   '#3FB950',
+  enterprise: '#D29922',
 }
 
 const ACTION_SHORT = {
@@ -23,10 +23,10 @@ const ACTION_SHORT = {
 }
 
 const tooltipStyle = {
-  background: '#1e2433',
-  border: '1px solid #2d3748',
+  background: '#161B22',
+  border: '1px solid #21262D',
   borderRadius: 6,
-  color: '#e2e8f0',
+  color: '#E6EDF3',
   fontSize: 12,
 }
 
@@ -70,11 +70,11 @@ export default function SegmentAnalysis({ interventions }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1e2433" vertical={false} />
-        <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
-        <YAxis domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#161B22" vertical={false} />
+        <XAxis dataKey="name" tick={{ fill: '#7D8590', fontSize: 11 }} axisLine={false} tickLine={false} />
+        <YAxis domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fill: '#7D8590', fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
         <Tooltip contentStyle={tooltipStyle} formatter={v => v !== null ? `${v}%` : 'no data'} />
-        <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
+        <Legend wrapperStyle={{ fontSize: 11, color: '#7D8590' }} />
         {plans.map(plan => (
           <Bar key={plan} dataKey={plan} fill={PLAN_COLORS[plan]} radius={[3, 3, 0, 0]} />
         ))}
@@ -100,11 +100,11 @@ function OverallFallback({ interventions }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1e2433" vertical={false} />
-        <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
-        <YAxis domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
-        <Tooltip contentStyle={{ background: '#1e2433', border: '1px solid #2d3748', borderRadius: 6, color: '#e2e8f0', fontSize: 12 }} formatter={v => [`${v}%`, 'Retention']} />
-        <Bar dataKey="retention" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#161B22" vertical={false} />
+        <XAxis dataKey="name" tick={{ fill: '#7D8590', fontSize: 11 }} axisLine={false} tickLine={false} />
+        <YAxis domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fill: '#7D8590', fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
+        <Tooltip contentStyle={{ background: '#161B22', border: '1px solid #21262D', borderRadius: 6, color: '#E6EDF3', fontSize: 12 }} formatter={v => [`${v}%`, 'Retention']} />
+        <Bar dataKey="retention" fill="#2D7DD2" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
@@ -112,7 +112,7 @@ function OverallFallback({ interventions }) {
 
 function Empty() {
   return (
-    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 13 }}>
+    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#484F58', fontSize: 13 }}>
       No intervention data loaded.
     </div>
   )
