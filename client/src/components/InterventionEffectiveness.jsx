@@ -17,10 +17,10 @@ const ACTION_LABELS = {
 }
 
 const tooltipStyle = {
-  background: '#1e2433',
-  border: '1px solid #2d3748',
+  background: '#161B22',
+  border: '1px solid #21262D',
   borderRadius: 6,
-  color: '#e2e8f0',
+  color: '#E6EDF3',
   fontSize: 12,
 }
 
@@ -49,17 +49,17 @@ export default function InterventionEffectiveness({ interventions }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1e2433" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#161B22" vertical={false} />
         <XAxis
           dataKey="name"
-          tick={{ fill: '#64748b', fontSize: 11 }}
+          tick={{ fill: '#7D8590', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
           domain={[0, 100]}
           tickFormatter={v => `${v}%`}
-          tick={{ fill: '#64748b', fontSize: 11 }}
+          tick={{ fill: '#7D8590', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           width={36}
@@ -72,7 +72,7 @@ export default function InterventionEffectiveness({ interventions }) {
           {data.map((entry, i) => (
             <Cell
               key={i}
-              fill={entry.retention >= 70 ? '#34d399' : entry.retention >= 50 ? '#60a5fa' : '#f87171'}
+              fill={entry.retention >= 70 ? '#2D7DD2' : entry.retention >= 50 ? '#2D7DD2' : '#F85149'}
             />
           ))}
         </Bar>
@@ -83,7 +83,7 @@ export default function InterventionEffectiveness({ interventions }) {
 
 function Empty() {
   return (
-    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 13 }}>
+    <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#484F58', fontSize: 13 }}>
       No intervention data loaded.
     </div>
   )
