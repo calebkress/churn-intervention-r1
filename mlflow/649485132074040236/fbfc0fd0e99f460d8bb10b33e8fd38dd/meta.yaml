@@ -1,0 +1,15 @@
+artifact_uri: /Users/calebkress/dev/work-stuff/churn-intervention-r1/mlflow/649485132074040236/fbfc0fd0e99f460d8bb10b33e8fd38dd/artifacts
+end_time: 1780957445699
+entry_point_name: ''
+experiment_id: '649485132074040236'
+lifecycle_stage: active
+run_id: fbfc0fd0e99f460d8bb10b33e8fd38dd
+run_name: maskableppo_27ec4f69
+run_uuid: fbfc0fd0e99f460d8bb10b33e8fd38dd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1780957422936
+status: 3
+tags: []
+user_id: calebkress
