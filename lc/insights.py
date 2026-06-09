@@ -69,6 +69,7 @@ def _format_intervention_history(intervention_history: list[dict]) -> str:
 
     lines = []
     for record in intervention_history:
+        record.pop('_id', None)
         action_idx = record.get("agent_action_index")
         outcome = record.get("outcome", "unknown")
         action_name = ACTION_NAMES.get(action_idx, f"action_{action_idx}")
